@@ -1,0 +1,1351 @@
+apiVersion: operators.coreos.com/v1alpha1
+kind: ClusterServiceVersion
+metadata:
+  annotations:
+    alm-examples: |-
+      [
+        {
+          "apiVersion": "grafana.com/v1alpha1",
+          "kind": "Grafana",
+          "metadata": {
+            "name": "grafana-sample"
+          },
+          "spec": {
+            "adminApi": {
+              "affinity": {},
+              "annotations": {},
+              "env": [],
+              "extraArgs": {},
+              "extraContainers": [],
+              "extraVolumeMounts": [],
+              "extraVolumes": [],
+              "initContainers": [],
+              "labels": {},
+              "livenessProbe": {
+                "httpGet": {
+                  "path": "/ready",
+                  "port": "http-metrics"
+                },
+                "initialDelaySeconds": 45
+              },
+              "nodeSelector": {},
+              "persistence": {
+                "subPath": null
+              },
+              "readinessProbe": {
+                "httpGet": {
+                  "path": "/ready",
+                  "port": "http-metrics"
+                },
+                "initialDelaySeconds": 45
+              },
+              "replicas": 1,
+              "resources": {},
+              "securityContext": {
+                "runAsGroup": 10001,
+                "runAsNonRoot": true,
+                "runAsUser": 10001
+              },
+              "service": {
+                "annotations": {},
+                "labels": {}
+              },
+              "strategy": {
+                "type": "RollingUpdate"
+              },
+              "terminationGracePeriodSeconds": 60,
+              "tolerations": []
+            },
+            "compactor": {
+              "affinity": {
+                "podAntiAffinity": {
+                  "preferredDuringSchedulingIgnoredDuringExecution": [
+                    {
+                      "podAffinityTerm": {
+                        "labelSelector": {
+                          "matchExpressions": [
+                            {
+                              "key": "target",
+                              "operator": "In",
+                              "values": [
+                                "compactor"
+                              ]
+                            }
+                          ]
+                        },
+                        "topologyKey": "kubernetes.io/hostname"
+                      },
+                      "weight": 100
+                    }
+                  ]
+                }
+              },
+              "annotations": {},
+              "env": [],
+              "extraArgs": {},
+              "extraContainers": [],
+              "extraVolumeMounts": [],
+              "extraVolumes": [],
+              "initContainers": [],
+              "labels": {},
+              "livenessProbe": {
+                "failureThreshold": 20,
+                "httpGet": {
+                  "path": "/ready",
+                  "port": "http-metrics",
+                  "scheme": "HTTP"
+                },
+                "initialDelaySeconds": 180,
+                "periodSeconds": 30,
+                "successThreshold": 1,
+                "timeoutSeconds": 1
+              },
+              "nodeSelector": {},
+              "persistentVolume": {
+                "accessModes": [
+                  "ReadWriteOnce"
+                ],
+                "annotations": {},
+                "enabled": true,
+                "size": "2Gi",
+                "subPath": ""
+              },
+              "readinessProbe": {
+                "httpGet": {
+                  "path": "/ready",
+                  "port": "http-metrics"
+                },
+                "initialDelaySeconds": 60
+              },
+              "replicas": 1,
+              "resources": {},
+              "securityContext": {
+                "fsGroup": 10001,
+                "runAsGroup": 10001,
+                "runAsNonRoot": true,
+                "runAsUser": 10001
+              },
+              "service": {
+                "annotations": {},
+                "labels": {}
+              },
+              "strategy": {
+                "type": "RollingUpdate"
+              },
+              "terminationGracePeriodSeconds": 300,
+              "tolerations": []
+            },
+            "config": {
+              "admin_client": {
+                "storage": {
+                  "s3": {
+                    "access_key_id": "enterprise-logs",
+                    "bucket_name": "enterprise-logs-admin",
+                    "endpoint": "{{ include \"loki.fullname\" . }}-minio:9000",
+                    "insecure": true,
+                    "secret_access_key": "supersecret"
+                  },
+                  "type": "s3"
+                }
+              },
+              "auth": {
+                "type": "enterprise"
+              },
+              "auth_enabled": true,
+              "cluster_name": "{{ .Release.Name }}",
+              "compactor": {
+                "shared_store": "s3",
+                "working_directory": "/data/boltdb-shipper-compactor"
+              },
+              "distributor": {
+                "ring": {
+                  "kvstore": {
+                    "store": "memberlist"
+                  }
+                }
+              },
+              "frontend": {
+                "compress_responses": true,
+                "log_queries_longer_than": "10s",
+                "tail_proxy_url": "http://{{ include \"loki.querierFullname\" . }}:3100"
+              },
+              "frontend_worker": {
+                "frontend_address": "{{ include \"loki.queryFrontendFullname\" . }}:9095"
+              },
+              "ingester": {
+                "chunk_block_size": 262144,
+                "chunk_encoding": "snappy",
+                "chunk_idle_period": "30m",
+                "chunk_retain_period": "1m",
+                "lifecycler": {
+                  "num_tokens": 512,
+                  "ring": {
+                    "kvstore": {
+                      "store": "memberlist"
+                    },
+                    "replication_factor": 3
+                  }
+                }
+              },
+              "ingester_client": {
+                "grpc_client_config": {
+                  "max_recv_msg_size": 104857600,
+                  "max_send_msg_size": 104857600
+                }
+              },
+              "license": {
+                "path": "/etc/enterprise-logs/license/license.jwt"
+              },
+              "limits_config": {
+                "enforce_metric_name": false,
+                "max_cache_freshness_per_query": "10m",
+                "reject_old_samples": true,
+                "reject_old_samples_max_age": "168h"
+              },
+              "memberlist": {
+                "join_members": [
+                  "{{ include \"loki.fullname\" . }}-memberlist"
+                ]
+              },
+              "querier": {
+                "query_ingesters_within": "12h"
+              },
+              "query_range": {
+                "align_queries_with_step": true,
+                "cache_results": true,
+                "results_cache": {
+                  "cache": {
+                    "memcached": {
+                      "expiration": "1h"
+                    },
+                    "memcached_client": {
+                      "timeout": "1s"
+                    }
+                  }
+                },
+                "split_queries_by_interval": "24h"
+              },
+              "ruler": {
+                "enable_alertmanager_discovery": false,
+                "enable_api": true,
+                "enable_sharding": true,
+                "ring": {
+                  "kvstore": {
+                    "store": "memberlist"
+                  }
+                },
+                "rule_path": "/var/loki",
+                "storage": {
+                  "s3": {
+                    "access_key_id": "enterprise-logs",
+                    "bucketnames": "enterprise-logs-ruler",
+                    "endpoint": "{{ include \"loki.fullname\" . }}-minio:9000",
+                    "insecure": true,
+                    "s3forcepathstyle": true,
+                    "secret_access_key": "supersecret"
+                  },
+                  "type": "s3"
+                }
+              },
+              "schema_config": {
+                "configs": [
+                  {
+                    "from": "2021-01-01",
+                    "index": {
+                      "period": "24h",
+                      "prefix": "index_"
+                    },
+                    "object_store": "aws",
+                    "schema": "v11",
+                    "store": "boltdb-shipper"
+                  }
+                ]
+              },
+              "server": {
+                "grpc_listen_port": 9095,
+                "http_listen_port": 3100
+              },
+              "storage_config": {
+                "aws": {
+                  "access_key_id": "enterprise-logs",
+                  "bucketnames": "enterprise-logs-tsdb",
+                  "endpoint": "{{ include \"loki.fullname\" . }}-minio:9000",
+                  "insecure": true,
+                  "s3forcepathstyle": true,
+                  "secret_access_key": "supersecret"
+                },
+                "boltdb_shipper": {
+                  "active_index_directory": "/var/loki/index",
+                  "cache_location": "/var/loki/cache",
+                  "cache_ttl": "24h",
+                  "index_gateway_client": {
+                    "server_address": "dns:///{{ include \"loki.indexGatewayFullname\" . }}:9095"
+                  },
+                  "shared_store": "s3"
+                }
+              }
+            },
+            "externalConfigName": "enterprise-logs-config",
+            "externalConfigVersion": "0",
+            "externalLicenseName": "enterprise-logs-license",
+            "externalLicenseVersion": "0",
+            "fullnameOverride": null,
+            "gateway": {
+              "affinity": {},
+              "annotations": {},
+              "env": [],
+              "extraArgs": {},
+              "extraContainers": [],
+              "extraVolumeMounts": [],
+              "extraVolumes": [],
+              "initContainers": [],
+              "labels": {},
+              "livenessProbe": {
+                "httpGet": {
+                  "path": "/ready",
+                  "port": "http-metrics"
+                },
+                "initialDelaySeconds": 45
+              },
+              "nodeSelector": {},
+              "persistence": {
+                "subPath": null
+              },
+              "readinessProbe": {
+                "httpGet": {
+                  "path": "/ready",
+                  "port": "http-metrics"
+                },
+                "initialDelaySeconds": 45
+              },
+              "replicas": 1,
+              "resources": {},
+              "securityContext": {
+                "fsGroup": 10001,
+                "runAsGroup": 10001,
+                "runAsNonRoot": true,
+                "runAsUser": 10001
+              },
+              "service": {
+                "annotations": {},
+                "labels": {}
+              },
+              "strategy": {
+                "type": "RollingUpdate"
+              },
+              "terminationGracePeriodSeconds": 60,
+              "tolerations": [],
+              "useDefaultProxyURLs": true
+            },
+            "image": {
+              "pullPolicy": "IfNotPresent",
+              "pullSecrets": [],
+              "registry": "docker.io",
+              "repository": "grafana/enterprise-logs",
+              "tag": "v1.1.0"
+            },
+            "license": {
+              "contents": "NOTAVALIDLICENSE"
+            },
+            "loki-distributed": {
+              "compactor": {
+                "enabled": false,
+                "extraArgs": [],
+                "extraEnv": [],
+                "extraEnvFrom": [],
+                "extraVolumeMounts": [],
+                "extraVolumes": [],
+                "image": {},
+                "nodeSelector": {},
+                "persistence": {
+                  "enabled": false,
+                  "size": "10Gi"
+                },
+                "podAnnotations": {},
+                "priorityClassName": null,
+                "resources": {},
+                "serviceAccount": {
+                  "annotations": {},
+                  "automountServiceAccountToken": true,
+                  "create": false,
+                  "imagePullSecrets": []
+                },
+                "serviceLabels": {},
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": []
+              },
+              "distributor": {
+                "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.distributorSelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.distributorSelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
+                "autoscaling": {
+                  "enabled": false,
+                  "maxReplicas": 3,
+                  "minReplicas": 1,
+                  "targetCPUUtilizationPercentage": 60
+                },
+                "enabled": true,
+                "extraArgs": [],
+                "extraEnv": [],
+                "extraEnvFrom": [],
+                "extraVolumeMounts": [
+                  {
+                    "mountPath": "/etc/enterprise-logs/license",
+                    "name": "license"
+                  }
+                ],
+                "extraVolumes": [
+                  {
+                    "name": "license",
+                    "secret": {
+                      "secretName": "enterprise-logs-license"
+                    }
+                  }
+                ],
+                "image": {},
+                "nodeSelector": {},
+                "podAnnotations": {},
+                "priorityClassName": null,
+                "replicas": 1,
+                "resources": {},
+                "serviceLabels": {},
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": []
+              },
+              "fullnameOverride": null,
+              "gateway": {
+                "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.gatewaySelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.gatewaySelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
+                "autoscaling": {
+                  "enabled": false,
+                  "maxReplicas": 3,
+                  "minReplicas": 1,
+                  "targetCPUUtilizationPercentage": 60
+                },
+                "basicAuth": {
+                  "enabled": false,
+                  "htpasswd": "{{ htpasswd (required \"'gateway.basicAuth.username' is required\" .Values.gateway.basicAuth.username) (required \"'gateway.basicAuth.password' is required\" .Values.gateway.basicAuth.password) }}"
+                },
+                "containerSecurityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "deploymentStrategy": {
+                  "type": "RollingUpdate"
+                },
+                "enabled": false,
+                "extraArgs": [],
+                "extraEnv": [],
+                "extraEnvFrom": [],
+                "extraVolumeMounts": [],
+                "extraVolumes": [],
+                "image": {
+                  "pullPolicy": "IfNotPresent",
+                  "registry": "docker.io",
+                  "repository": "nginxinc/nginx-unprivileged",
+                  "tag": "1.19-alpine"
+                },
+                "ingress": {
+                  "annotations": {},
+                  "enabled": false,
+                  "hosts": [
+                    {
+                      "host": "gateway.loki.example.com",
+                      "paths": [
+                        {
+                          "path": "/"
+                        }
+                      ]
+                    }
+                  ],
+                  "tls": [
+                    {
+                      "hosts": [
+                        "gateway.loki.example.com"
+                      ],
+                      "secretName": "loki-gateway-tls"
+                    }
+                  ]
+                },
+                "nginxConfig": {
+                  "file": "worker_processes  5;  ## Default: 1\nerror_log  /dev/stderr;\npid        /tmp/nginx.pid;\nworker_rlimit_nofile 8192;\n\nevents {\n  worker_connections  4096;  ## Default: 1024\n}\n\nhttp {\n  client_body_temp_path /tmp/client_temp;\n  proxy_temp_path       /tmp/proxy_temp_path;\n  fastcgi_temp_path     /tmp/fastcgi_temp;\n  uwsgi_temp_path       /tmp/uwsgi_temp;\n  scgi_temp_path        /tmp/scgi_temp;\n\n  default_type application/octet-stream;\n  log_format   {{ .Values.gateway.nginxConfig.logFormat }}\n\n  {{- if .Values.gateway.verboseLogging }}\n  access_log   /dev/stderr  main;\n  {{- else }}\n\n  map $status $loggable {\n    ~^[23]  0;\n    default 1;\n  }\n  access_log   /dev/stderr  main  if=$loggable;\n  {{- end }}\n\n  sendfile     on;\n  tcp_nopush   on;\n  resolver {{ .Values.global.dnsService }}.{{ .Values.global.dnsNamespace }}.svc.{{ .Values.global.clusterDomain }};\n\n  {{- with .Values.gateway.nginxConfig.httpSnippet }}\n  {{ . | nindent 2 }}\n  {{- end }}\n\n  server {\n    listen             8080;\n\n    {{- if .Values.gateway.basicAuth.enabled }}\n    auth_basic           \"Loki\";\n    auth_basic_user_file /etc/nginx/secrets/.htpasswd;\n    {{- end }}\n\n    location = / {\n      return 200 'OK';\n      auth_basic off;\n    }\n\n    location = /api/prom/push {\n      proxy_pass       http://{{ include \"loki.distributorFullname\" . }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;\n    }\n\n    location = /api/prom/tail {\n      proxy_pass       http://{{ include \"loki.querierFullname\" . }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;\n      proxy_set_header Upgrade $http_upgrade;\n      proxy_set_header Connection \"upgrade\";\n    }\n\n    location ~ /api/prom/.* {\n      proxy_pass       http://{{ include \"loki.queryFrontendFullname\" . }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;\n    }\n\n    location = /loki/api/v1/push {\n      proxy_pass       http://{{ include \"loki.distributorFullname\" . }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;\n    }\n\n    location = /loki/api/v1/tail {\n      proxy_pass       http://{{ include \"loki.querierFullname\" . }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;\n      proxy_set_header Upgrade $http_upgrade;\n      proxy_set_header Connection \"upgrade\";\n    }\n\n    location ~ /loki/api/.* {\n      proxy_pass       http://{{ include \"loki.queryFrontendFullname\" . }}.{{ .Release.Namespace }}.svc.{{ .Values.global.clusterDomain }}:3100$request_uri;\n    }\n\n    {{- with .Values.gateway.nginxConfig.serverSnippet }}\n    {{ . | nindent 4 }}\n    {{- end }}\n  }\n}\n",
+                  "httpSnippet": "",
+                  "logFormat": "main '$remote_addr - $remote_user [$time_local]  $status '\n        '\"$request\" $body_bytes_sent \"$http_referer\" '\n        '\"$http_user_agent\" \"$http_x_forwarded_for\"';",
+                  "serverSnippet": ""
+                },
+                "nodeSelector": {},
+                "podAnnotations": {},
+                "podSecurityContext": {
+                  "fsGroup": 101,
+                  "runAsGroup": 101,
+                  "runAsNonRoot": true,
+                  "runAsUser": 101
+                },
+                "priorityClassName": null,
+                "readinessProbe": {
+                  "httpGet": {
+                    "path": "/",
+                    "port": "http"
+                  },
+                  "initialDelaySeconds": 15,
+                  "timeoutSeconds": 1
+                },
+                "replicas": 1,
+                "resources": {},
+                "service": {
+                  "annotations": {},
+                  "labels": {},
+                  "port": 80,
+                  "type": "ClusterIP"
+                },
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": [],
+                "verboseLogging": true
+              },
+              "global": {
+                "clusterDomain": "cluster.local",
+                "dnsNamespace": "kube-system",
+                "dnsService": "kube-dns",
+                "image": {},
+                "priorityClassName": null
+              },
+              "imagePullSecrets": [],
+              "indexGateway": {
+                "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.indexGatewaySelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.indexGatewaySelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
+                "enabled": true,
+                "extraArgs": [],
+                "extraEnv": [],
+                "extraEnvFrom": [],
+                "extraVolumeMounts": [
+                  {
+                    "mountPath": "/etc/enterprise-logs/license",
+                    "name": "license"
+                  }
+                ],
+                "extraVolumes": [
+                  {
+                    "name": "license",
+                    "secret": {
+                      "secretName": "enterprise-logs-license"
+                    }
+                  }
+                ],
+                "image": {},
+                "nodeSelector": {},
+                "persistence": {
+                  "enabled": true,
+                  "size": "10Gi",
+                  "storageClass": null
+                },
+                "podAnnotations": {},
+                "priorityClassName": null,
+                "replicas": 1,
+                "resources": {},
+                "serviceLabels": {},
+                "terminationGracePeriodSeconds": 300,
+                "tolerations": []
+              },
+              "ingester": {
+                "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.ingesterSelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.ingesterSelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
+                "enabled": true,
+                "extraArgs": [],
+                "extraEnv": [],
+                "extraEnvFrom": [],
+                "extraVolumeMounts": [
+                  {
+                    "mountPath": "/etc/enterprise-logs/license",
+                    "name": "license"
+                  }
+                ],
+                "extraVolumes": [
+                  {
+                    "name": "license",
+                    "secret": {
+                      "secretName": "enterprise-logs-license"
+                    }
+                  }
+                ],
+                "image": {},
+                "nodeSelector": {},
+                "persistence": {
+                  "enabled": false,
+                  "size": "10Gi"
+                },
+                "podAnnotations": {},
+                "priorityClassName": null,
+                "replicas": 3,
+                "resources": {},
+                "serviceLabels": {},
+                "terminationGracePeriodSeconds": 300,
+                "tolerations": []
+              },
+              "loki": {
+                "config": "auth_enabled: false\n\nserver:\n  http_listen_port: 3100\n\ndistributor:\n  ring:\n    kvstore:\n      store: memberlist\n\nmemberlist:\n  join_members:\n    - {{ include \"loki.fullname\" . }}-memberlist\n\ningester:\n  lifecycler:\n    ring:\n      kvstore:\n        store: memberlist\n      replication_factor: 1\n  chunk_idle_period: 30m\n  chunk_block_size: 262144\n  chunk_encoding: snappy\n  chunk_retain_period: 1m\n  max_transfer_retries: 0\n\nlimits_config:\n  enforce_metric_name: false\n  reject_old_samples: true\n  reject_old_samples_max_age: 168h\n  max_cache_freshness_per_query: 10m\n\nschema_config:\n  configs:\n    - from: 2020-09-07\n      store: boltdb-shipper\n      object_store: filesystem\n      schema: v11\n      index:\n        prefix: loki_index_\n        period: 24h\n\nstorage_config:\n  boltdb_shipper:\n    shared_store: filesystem\n    active_index_directory: /var/loki/index\n    cache_location: /var/loki/cache\n    cache_ttl: 168h\n    {{- if .Values.indexGateway.enabled }}\n    index_gateway_client:\n      server_address: dns:///{{ include \"loki.indexGatewayFullname\" . }}:9095\n    {{- end }}\n  filesystem:\n    directory: /var/loki/chunks\n\nchunk_store_config:\n  max_look_back_period: 0s\n\ntable_manager:\n  retention_deletes_enabled: false\n  retention_period: 0s\n\nquery_range:\n  align_queries_with_step: true\n  max_retries: 5\n  split_queries_by_interval: 15m\n  cache_results: true\n  results_cache:\n    cache:\n      enable_fifocache: true\n      fifocache:\n        max_size_items: 1024\n        validity: 24h\n\nfrontend_worker:\n  frontend_address: {{ include \"loki.queryFrontendFullname\" . }}:9095\n\nfrontend:\n  log_queries_longer_than: 5s\n  compress_responses: true\n  tail_proxy_url: http://{{ include \"loki.querierFullname\" . }}:3100\n\ncompactor:\n  shared_store: filesystem\n\nruler:\n  storage:\n    type: local\n    local:\n      directory: /etc/loki/rules\n  ring:\n    kvstore:\n      store: memberlist\n  rule_path: /tmp/loki/scratch\n  alertmanager_url: https://alertmanager.xx\n  external_url: https://alertmanager.xx\n",
+                "containerSecurityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "existingSecretForConfig": "enterprise-logs-config",
+                "image": {
+                  "pullPolicy": "IfNotPresent",
+                  "pullSecrets": [],
+                  "registry": "docker.io",
+                  "repository": "grafana/enterprise-logs",
+                  "tag": "v1.1.0"
+                },
+                "podAnnotations": {},
+                "podSecurityContext": {
+                  "fsGroup": 10001,
+                  "runAsGroup": 10001,
+                  "runAsNonRoot": true,
+                  "runAsUser": 10001
+                },
+                "readinessProbe": {
+                  "httpGet": {
+                    "path": "/ready",
+                    "port": "http"
+                  },
+                  "initialDelaySeconds": 30,
+                  "timeoutSeconds": 1
+                },
+                "revisionHistoryLimit": 10
+              },
+              "memcached": {
+                "containerSecurityContext": {
+                  "allowPrivilegeEscalation": false,
+                  "capabilities": {
+                    "drop": [
+                      "ALL"
+                    ]
+                  },
+                  "readOnlyRootFilesystem": true
+                },
+                "image": {
+                  "pullPolicy": "IfNotPresent",
+                  "registry": "docker.io",
+                  "repository": "memcached",
+                  "tag": "1.6.7-alpine"
+                },
+                "podSecurityContext": {
+                  "fsGroup": 11211,
+                  "runAsGroup": 11211,
+                  "runAsNonRoot": true,
+                  "runAsUser": 11211
+                }
+              },
+              "memcachedChunks": {
+                "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.memcachedChunksSelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.memcachedChunksSelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
+                "enabled": false,
+                "extraArgs": [
+                  "-I 32m"
+                ],
+                "extraEnv": [],
+                "extraEnvFrom": [],
+                "nodeSelector": {},
+                "podAnnotations": {},
+                "replicas": 1,
+                "resources": {},
+                "serviceLabels": {},
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": []
+              },
+              "memcachedExporter": {
+                "enabled": false,
+                "image": {
+                  "pullPolicy": "IfNotPresent",
+                  "registry": "docker.io",
+                  "repository": "prom/memcached-exporter",
+                  "tag": "v0.6.0"
+                },
+                "resources": {}
+              },
+              "memcachedFrontend": {
+                "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.memcachedFrontendSelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.memcachedFrontendSelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
+                "enabled": false,
+                "extraArgs": [
+                  "-I 32m"
+                ],
+                "extraEnv": [],
+                "extraEnvFrom": [],
+                "nodeSelector": {},
+                "podAnnotations": {},
+                "replicas": 1,
+                "resources": {},
+                "serviceLabels": {},
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": []
+              },
+              "memcachedIndexQueries": {
+                "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.memcachedIndexQueriesSelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.memcachedIndexQueriesSelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
+                "enabled": false,
+                "extraArgs": [
+                  "-I 32m"
+                ],
+                "extraEnv": [],
+                "extraEnvFrom": [],
+                "nodeSelector": {},
+                "podAnnotations": {},
+                "replicas": 1,
+                "resources": {},
+                "serviceLabels": {},
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": []
+              },
+              "memcachedIndexWrites": {
+                "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.memcachedIndexWritesSelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.memcachedIndexWritesSelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
+                "enabled": false,
+                "extraArgs": [
+                  "-I 32m"
+                ],
+                "extraEnv": [],
+                "extraEnvFrom": [],
+                "nodeSelector": {},
+                "podAnnotations": {},
+                "replicas": 1,
+                "resources": {},
+                "serviceLabels": {},
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": []
+              },
+              "nameOverride": "enterprise-logs",
+              "networkPolicy": {
+                "alertmanager": {
+                  "namespaceSelector": {},
+                  "podSelector": {},
+                  "port": 9093
+                },
+                "discovery": {
+                  "namespaceSelector": {},
+                  "podSelector": {}
+                },
+                "enabled": false,
+                "externalStorage": {
+                  "cidrs": [],
+                  "ports": []
+                },
+                "ingress": {
+                  "namespaceSelector": {},
+                  "podSelector": {}
+                },
+                "metrics": {
+                  "cidrs": [],
+                  "namespaceSelector": {},
+                  "podSelector": {}
+                }
+              },
+              "prometheusRule": {
+                "annotations": {},
+                "enabled": false,
+                "groups": [],
+                "labels": {}
+              },
+              "querier": {
+                "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.querierSelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.querierSelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
+                "autoscaling": {
+                  "enabled": false,
+                  "maxReplicas": 3,
+                  "minReplicas": 1,
+                  "targetCPUUtilizationPercentage": 60
+                },
+                "enabled": true,
+                "extraArgs": [],
+                "extraEnv": [],
+                "extraEnvFrom": [],
+                "extraVolumeMounts": [
+                  {
+                    "mountPath": "/etc/enterprise-logs/license",
+                    "name": "license"
+                  }
+                ],
+                "extraVolumes": [
+                  {
+                    "name": "license",
+                    "secret": {
+                      "secretName": "enterprise-logs-license"
+                    }
+                  }
+                ],
+                "image": {},
+                "nodeSelector": {},
+                "persistence": {
+                  "enabled": true,
+                  "size": "10Gi",
+                  "storageClass": null
+                },
+                "podAnnotations": {},
+                "priorityClassName": null,
+                "replicas": 1,
+                "resources": {},
+                "serviceLabels": {},
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": []
+              },
+              "queryFrontend": {
+                "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.queryFrontendSelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.queryFrontendSelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
+                "autoscaling": {
+                  "enabled": false,
+                  "maxReplicas": 3,
+                  "minReplicas": 1,
+                  "targetCPUUtilizationPercentage": 60
+                },
+                "enabled": true,
+                "extraArgs": [],
+                "extraEnv": [],
+                "extraEnvFrom": [],
+                "extraVolumeMounts": [
+                  {
+                    "mountPath": "/etc/enterprise-logs/license",
+                    "name": "license"
+                  }
+                ],
+                "extraVolumes": [
+                  {
+                    "name": "license",
+                    "secret": {
+                      "secretName": "enterprise-logs-license"
+                    }
+                  }
+                ],
+                "image": {},
+                "nodeSelector": {},
+                "podAnnotations": {},
+                "priorityClassName": null,
+                "replicas": 1,
+                "resources": {},
+                "serviceLabels": {},
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": []
+              },
+              "rbac": {
+                "pspEnabled": false
+              },
+              "ruler": {
+                "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.rulerSelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.rulerSelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
+                "directories": {},
+                "enabled": true,
+                "extraArgs": [],
+                "extraEnv": [],
+                "extraEnvFrom": [],
+                "extraVolumeMounts": [
+                  {
+                    "mountPath": "/etc/enterprise-logs/license",
+                    "name": "license"
+                  }
+                ],
+                "extraVolumes": [
+                  {
+                    "name": "license",
+                    "secret": {
+                      "secretName": "enterprise-logs-license"
+                    }
+                  }
+                ],
+                "image": {},
+                "nodeSelector": {},
+                "persistence": {
+                  "enabled": false,
+                  "size": "10Gi"
+                },
+                "podAnnotations": {},
+                "priorityClassName": null,
+                "replicas": 1,
+                "resources": {},
+                "serviceLabels": {},
+                "terminationGracePeriodSeconds": 300,
+                "tolerations": []
+              },
+              "serviceAccount": {
+                "annotations": {},
+                "automountServiceAccountToken": true,
+                "create": true,
+                "imagePullSecrets": []
+              },
+              "serviceMonitor": {
+                "annotations": {},
+                "enabled": false,
+                "labels": {},
+                "namespaceSelector": {},
+                "relabelings": [],
+                "scheme": "http"
+              },
+              "tableManager": {
+                "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.tableManagerSelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.tableManagerSelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
+                "enabled": false,
+                "extraArgs": [],
+                "extraEnv": [],
+                "extraEnvFrom": [],
+                "extraVolumeMounts": [],
+                "extraVolumes": [],
+                "image": {},
+                "nodeSelector": {},
+                "podAnnotations": {},
+                "priorityClassName": null,
+                "resources": {},
+                "serviceLabels": {},
+                "terminationGracePeriodSeconds": 30,
+                "tolerations": []
+              }
+            },
+            "minio": {
+              "DeploymentUpdate": {
+                "maxSurge": "100%",
+                "maxUnavailable": 0,
+                "type": "RollingUpdate"
+              },
+              "StatefulSetUpdate": {
+                "updateStrategy": "RollingUpdate"
+              },
+              "accessKey": "enterprise-logs",
+              "affinity": {},
+              "azuregateway": {
+                "enabled": false,
+                "replicas": 4
+              },
+              "bucketRoot": "",
+              "buckets": [
+                {
+                  "name": "enterprise-logs-tsdb",
+                  "policy": "none",
+                  "purge": false
+                },
+                {
+                  "name": "enterprise-logs-admin",
+                  "policy": "none",
+                  "purge": false
+                },
+                {
+                  "name": "enterprise-logs-ruler",
+                  "policy": "none",
+                  "purge": false
+                }
+              ],
+              "certsPath": "/etc/minio/certs/",
+              "clusterDomain": "cluster.local",
+              "configPathmc": "/etc/minio/mc/",
+              "defaultBucket": {
+                "enabled": false,
+                "name": "bucket",
+                "policy": "none",
+                "purge": false
+              },
+              "drivesPerNode": 1,
+              "enabled": true,
+              "environment": {},
+              "etcd": {
+                "clientCert": "",
+                "clientCertKey": "",
+                "corednsPathPrefix": "",
+                "endpoints": [],
+                "pathPrefix": ""
+              },
+              "existingSecret": "",
+              "extraArgs": [],
+              "fullnameOverride": "",
+              "gcsgateway": {
+                "enabled": false,
+                "gcsKeyJson": "",
+                "projectId": "",
+                "replicas": 4
+              },
+              "global": {},
+              "helmKubectlJqImage": {
+                "pullPolicy": "IfNotPresent",
+                "repository": "bskim45/helm-kubectl-jq",
+                "tag": "3.1.0"
+              },
+              "image": {
+                "pullPolicy": "IfNotPresent",
+                "repository": "minio/minio",
+                "tag": "RELEASE.2020-12-03T05-49-24Z"
+              },
+              "imagePullSecrets": [],
+              "ingress": {
+                "annotations": {},
+                "enabled": false,
+                "hosts": [
+                  "chart-example.local"
+                ],
+                "labels": {},
+                "path": "/",
+                "tls": []
+              },
+              "makeBucketJob": {
+                "resources": {
+                  "requests": {
+                    "memory": "128Mi"
+                  }
+                },
+                "securityContext": {
+                  "enabled": false,
+                  "fsGroup": 1000,
+                  "runAsGroup": 1000,
+                  "runAsUser": 1000
+                }
+              },
+              "mcImage": {
+                "pullPolicy": "IfNotPresent",
+                "repository": "minio/mc",
+                "tag": "RELEASE.2020-11-25T23-04-07Z"
+              },
+              "metrics": {
+                "serviceMonitor": {
+                  "additionalLabels": {},
+                  "enabled": false,
+                  "relabelConfigs": {}
+                }
+              },
+              "mode": "standalone",
+              "mountPath": "/export",
+              "nameOverride": "",
+              "nasgateway": {
+                "enabled": false,
+                "replicas": 4
+              },
+              "networkPolicy": {
+                "allowExternal": true,
+                "enabled": false
+              },
+              "nodeSelector": {},
+              "persistence": {
+                "VolumeName": "",
+                "accessMode": "ReadWriteOnce",
+                "enabled": true,
+                "existingClaim": "",
+                "size": "5Gi",
+                "storageClass": "",
+                "subPath": ""
+              },
+              "podAnnotations": {},
+              "podDisruptionBudget": {
+                "enabled": false,
+                "maxUnavailable": 1
+              },
+              "podLabels": {},
+              "priorityClassName": "",
+              "replicas": 4,
+              "resources": {
+                "requests": {
+                  "cpu": "100m",
+                  "memory": "128Mi"
+                }
+              },
+              "s3gateway": {
+                "accessKey": "",
+                "enabled": false,
+                "replicas": 4,
+                "secretKey": "",
+                "serviceEndpoint": ""
+              },
+              "secretKey": "supersecret",
+              "securityContext": {
+                "enabled": true,
+                "fsGroup": 1000,
+                "runAsGroup": 1000,
+                "runAsUser": 1000
+              },
+              "service": {
+                "annotations": {},
+                "externalIPs": [],
+                "nodePort": 32000,
+                "port": 9000,
+                "type": "ClusterIP"
+              },
+              "serviceAccount": {
+                "create": true
+              },
+              "tls": {
+                "certSecret": "",
+                "enabled": false,
+                "privateKey": "private.key",
+                "publicCrt": "public.crt"
+              },
+              "tolerations": [],
+              "trustedCertsSecret": "",
+              "updatePrometheusJob": {
+                "securityContext": {
+                  "enabled": false,
+                  "fsGroup": 1000,
+                  "runAsGroup": 1000,
+                  "runAsUser": 1000
+                }
+              },
+              "zones": 1
+            },
+            "nameOverride": null,
+            "serviceAccount": {
+              "create": true
+            },
+            "tokengen": {
+              "annotations": {},
+              "enable": true,
+              "env": [],
+              "extraArgs": {},
+              "extraVolumeMounts": [],
+              "extraVolumes": [],
+              "labels": {},
+              "securityContext": {
+                "fsGroup": 10001,
+                "runAsGroup": 10001,
+                "runAsNonRoot": true,
+                "runAsUser": 10001
+              }
+            },
+            "useExternalConfig": false,
+            "useExternalLicense": false
+          }
+        }
+      ]
+    capabilities: Basic Install
+    categories: Observability
+    containerImage: docker.io/patrickabrennan/enterprise-logs-controller-bundle:v1.2.0
+    description: An operator to install Grafana enterprise Logs (GEL) on OpenShift
+    operators.operatorframework.io/builder: operator-sdk-v1.10.0+git
+    operators.operatorframework.io/project_layout: helm.sdk.operatorframework.io/v1
+    support: Grafana Labs
+  name: enterprise-logs.v1.2.0
+  namespace: placeholder
+spec:
+  apiservicedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - kind: Grafana
+      name: grafanas.grafana.com
+      version: v1alpha1
+  description: An operator to install Grafana Enterprise Logs (GEL) on OpenShift
+  displayName: Grafana Enterprise Logs (GEL) Operator
+  icon:
+  - base64data: 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
+    mediatype: png
+  install:
+    spec:
+      clusterPermissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - namespaces
+          verbs:
+          - get
+        - apiGroups:
+          - ""
+          resources:
+          - secrets
+          verbs:
+          - '*'
+        - apiGroups:
+          - ""
+          resources:
+          - events
+          verbs:
+          - create
+        - apiGroups:
+          - grafana.com
+          resources:
+          - grafanas
+          - grafanas/status
+          - grafanas/finalizers
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - policy
+          resources:
+          - poddisruptionbudgets
+          verbs:
+          - '*'
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          - persistentvolumeclaims
+          - secrets
+          - serviceaccounts
+          - services
+          verbs:
+          - '*'
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resources:
+          - rolebindings
+          - roles
+          verbs:
+          - '*'
+        - apiGroups:
+          - apps
+          resources:
+          - deployments
+          - statefulsets
+          verbs:
+          - '*'
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resources:
+          - clusterrolebindings
+          - clusterroles
+          verbs:
+          - '*'
+        - apiGroups:
+          - security.openshift.io
+          resourceNames:
+          - anyuid
+          resources:
+          - securitycontextconstraints
+          verbs:
+          - use
+        - apiGroups:
+          - security.openshift.io
+          resources:
+          - securitycontextconstraints
+          verbs:
+          - '*'
+        - apiGroups:
+          - batch
+          resources:
+          - jobs
+          verbs:
+          - delete
+          - create
+          - get
+          - watch
+          - list
+          - patch
+        - apiGroups:
+          - authentication.k8s.io
+          resources:
+          - tokenreviews
+          verbs:
+          - create
+        - apiGroups:
+          - authorization.k8s.io
+          resources:
+          - subjectaccessreviews
+          verbs:
+          - create
+        serviceAccountName: enterprise-logs-controller-manager
+      deployments:
+      - name: enterprise-logs-controller-manager
+        spec:
+          replicas: 1
+          selector:
+            matchLabels:
+              control-plane: controller-manager
+          strategy: {}
+          template:
+            metadata:
+              labels:
+                control-plane: controller-manager
+            spec:
+              containers:
+              - args:
+                - --secure-listen-address=0.0.0.0:8443
+                - --upstream=http://127.0.0.1:8080/
+                - --logtostderr=true
+                - --v=10
+                image: registry.redhat.io/openshift4/ose-kube-rbac-proxy:v4.7.0
+                name: kube-rbac-proxy
+                ports:
+                - containerPort: 8443
+                  name: https
+                  protocol: TCP
+                resources: {}
+              - args:
+                - --health-probe-bind-address=:8081
+                - --metrics-bind-address=127.0.0.1:8080
+                - --leader-elect
+                - --leader-election-id=enterprise-logs
+                image: docker.io/patrickabrennan/enterprise-logs-controller:v1.2.0
+                livenessProbe:
+                  httpGet:
+                    path: /healthz
+                    port: 8081
+                  initialDelaySeconds: 15
+                  periodSeconds: 20
+                name: manager
+                readinessProbe:
+                  httpGet:
+                    path: /readyz
+                    port: 8081
+                  initialDelaySeconds: 5
+                  periodSeconds: 10
+                resources:
+                  limits:
+                    cpu: 800m
+                    memory: 1Gi
+                  requests:
+                    cpu: 800m
+                    memory: 60Mi
+                securityContext:
+                  allowPrivilegeEscalation: false
+              securityContext:
+                runAsNonRoot: true
+              serviceAccountName: enterprise-logs-controller-manager
+              terminationGracePeriodSeconds: 10
+      permissions:
+      - rules:
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - coordination.k8s.io
+          resources:
+          - leases
+          verbs:
+          - get
+          - list
+          - watch
+          - create
+          - update
+          - patch
+          - delete
+        - apiGroups:
+          - ""
+          resources:
+          - events
+          verbs:
+          - create
+          - patch
+        serviceAccountName: enterprise-logs-controller-manager
+    strategy: deployment
+  installModes:
+  - supported: false
+    type: OwnNamespace
+  - supported: false
+    type: SingleNamespace
+  - supported: false
+    type: MultiNamespace
+  - supported: true
+    type: AllNamespaces
+  keywords:
+  - Grafana Enterprise Logs
+  - GEL
+  - Logs
+  - Observability
+  links:
+  - name: Enterprise Logs
+    url: https://enterprise-logs.domain
+  maturity: alpha
+  provider:
+    name: Grafana Labs
+    url: https://grafana.com
+  version: 1.2.0
