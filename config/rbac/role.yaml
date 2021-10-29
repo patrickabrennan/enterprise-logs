@@ -50,12 +50,6 @@ rules:
   apiGroups:
   - "policy"
   resources:
-  - "podsecuritypolicies"
-- verbs:
-  - "*"
-  apiGroups:
-  - "policy"
-  resources:
   - "poddisruptionbudgets"
 - verbs:
   - "*"
@@ -81,5 +75,37 @@ rules:
   resources:
   - "deployments"
   - "statefulsets"
+- verbs:
+  - "*"
+  apiGroups:
+  - "rbac.authorization.k8s.io"
+  resources:
+  - "clusterrolebindings"
+  - "clusterroles"
+- apiGroups:
+  - security.openshift.io
+  resourceNames:
+  - anyuid
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - use
+- apiGroups:
+  - security.openshift.io
+  resources:
+  - securitycontextconstraints
+  verbs:
+  - '*'
+- apiGroups:
+  - batch
+  resources:
+  - jobs
+  verbs:
+  - delete
+  - create
+  - get
+  - watch
+  - list
+  - patch
 
 #+kubebuilder:scaffold:rules
