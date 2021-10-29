@@ -944,7 +944,7 @@ spec:
       terminationGracePeriodSeconds: 30
       tolerations: []
     rbac:
-      pspEnabled: true
+      pspEnabled: false
     ruler:
       affinity: |
         podAntiAffinity:
