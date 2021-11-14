@@ -1297,7 +1297,7 @@ spec:
         description: Specifies the s3forcepathstyle. Defaults to true
         path: config.storage_config.aws.s3forcepathstyle
         x-descriptors:
-          - 'urn:alm:descriptor:com.tectonic.ui:password'
+          - 'urn:alm:descriptor:com.tectonic.ui:text'
           - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 storage_config Configuration'
       - displayName: The ruler S3 bucketnames
         description: Specifies the ruler S3 bucketnames
@@ -1328,13 +1328,13 @@ spec:
         path: config.ruler.storage.s3.insecure
         x-descriptors:
           - 'urn:alm:descriptor:com.tectonic.ui:text'
-          - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Admin_client Configuration'
+          - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Ruler Configuration'
       - displayName: The ruler s3forcepathstyle policy
         description: Specifies the s3forcepathstyle. Defaults to true
         path: config.ruler.storage.s3.s3forcepathstyle
         x-descriptors:
           - 'urn:alm:descriptor:com.tectonic.ui:text'
-          - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Admin_client Configuration'
+          - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Ruler Configuration'
       - displayName: Minio
         description: Turn off is setting S3 endpoints. Set to on by default. For large configurations set to off as S3 should be used instead
         path: minio.enabled
