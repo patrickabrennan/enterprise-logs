@@ -241,6 +241,7 @@ metadata:
                     "bucketnames": "enterprise-logs-ruler",
                     "endpoint": "{{ include \"loki.fullname\" . }}-minio:9000",
                     "insecure": true,
+                    "region": null,
                     "s3forcepathstyle": true,
                     "secret_access_key": "supersecret"
                   },
@@ -271,6 +272,7 @@ metadata:
                   "bucketnames": "enterprise-logs-tsdb",
                   "endpoint": "{{ include \"loki.fullname\" . }}-minio:9000",
                   "insecure": true,
+                  "region": null,
                   "s3forcepathstyle": true,
                   "secret_access_key": "supersecret"
                 },
@@ -1149,60 +1151,6 @@ spec:
         x-descriptors:
           - 'urn:alm:descriptor:com.tectonic.ui:password'
           - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:GEL Configuration'
-     #- displayName: Admin_api Replication Factor
-     #  description: The Admin_api Replication Factor Must always be at least 3
-     #  path: admin_api.replicas
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:number'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:GEL Configuration'
-     #- displayName: Alertmanager Replication Factor
-     #  description: The Alertmanager Replication Factor Must always be at least 3
-     #  path: alertmanager.replicas
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:number'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:GEL Configuration'
-     #- displayName: Compactor Replication Factor
-     #  description: The Compactor Replication Factor Must always be at least 1
-     #  path: compactor.replicas
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:number'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:GEL Configuration'
-     #- displayName: Distributor Replication Factor
-     #  description: The Distributor Replication Factor Must always be at least 15
-     #  path: distributor.replicas
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:number'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:GEL Configuration'
-     #- displayName: Gateway Replication Factor
-     #  description: The Distributor Replication Factor Must always be at least 8
-     #  path: gateway.replicas
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:number'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:GEL Configuration'
-     #- displayName: Ingester Replication Factor
-     #  description: The Ingester Replication Factor Must always be at least 25
-     #  path: ingester.replicas
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:number'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:GEL Configuration'
-     #- displayName: Memcached Replication Factor
-     #  description: The Memcached Replication Factor Must always be at least 32
-     #  path: memcached.replicaCount
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:number'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:Memcached Configuration'
-     #- displayName: Memcached-metadata Replication Factor
-     #  description: The Memcached-metadata Replication Factor Must always be at least 1
-     #  path: memcached-metadata.replicaCount
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:number'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:Memcached Configuration'
-     #- displayName: Memcached-queries Replication Factor
-     #  description: The Memcached-queries Replication Factor Must always be at least 10
-     #  path: memcached-queries.replicaCount
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:number'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:Memcached Configuration'
       - displayName: The admin_client S3 bucket_name
         description: Specifies the Admin_client S3 bucket_name
         path: config.admin_client.storage.s3.bucket_name
@@ -1233,36 +1181,6 @@ spec:
         x-descriptors:
           - 'urn:alm:descriptor:com.tectonic.ui:text'
           - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Admin_client Configuration'
-     #- displayName: The alertmanager S3 bucketnames
-     #  description: Specifies the alertmanager S3 bucketnames
-     #  path: config.alertmanager.storage.s3.bucketnames
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:text'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Alertmanager Configuration'
-     #- displayName: The alertmanager S3 endpoint
-     #  description: Specifies the alertmanager S3 endpoint
-     #  path: config.alertmanager.storage.s3.endpoint
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:text'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Alertmanager Configuration'
-     #- displayName: The alertmanager S3 access_key_id
-     #  description: Specifies the alertmanager S3 access_key_id
-     #  path: config.alertmanager.storage.s3.access_key_id
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:password'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Alertmanager Configuration'
-     #- displayName: The alertmanager S3 secret_access_key
-     #  description: Specifies the alertmanager S3 secret_access_key
-     #  path: config.alertmanager.storage.s3.secret_access_key
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:password'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Alertmanager Configuration'
-     #- displayName: The alertmanager S3 region
-     #  description: Specifies the alertmanager S3 region
-     #  path: config.alertmanager.storage.s3.region
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:text'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Alertmanager Configuration'
       - displayName: The Storage Config S3 bucket_name
         description: Specifies the Storage Config S3 bucketnames
         path: config.storage_config.aws.bucketnames
@@ -1286,6 +1204,12 @@ spec:
         path: config.storage_config.aws.secret_access_key
         x-descriptors:
           - 'urn:alm:descriptor:com.tectonic.ui:password'
+          - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 storage_config Configuration'
+      - displayName: The Storage Config S3 region
+        description: Specifies the Storage Config S3 region
+        path: config.storage_config.aws.region
+        x-descriptors:
+          - 'urn:alm:descriptor:com.tectonic.ui:text'
           - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 storage_config Configuration'
       - displayName: The Storage Config S3 communication status
         description: Specifies the Storage Config S3 communication status. Defaults to insecure
@@ -1322,6 +1246,12 @@ spec:
         path: config.ruler.storage.s3.secret_access_key
         x-descriptors:
           - 'urn:alm:descriptor:com.tectonic.ui:password'
+          - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Ruler Configuration'
+      - displayName: The ruler S3 region
+        description: Specifies the ruler S3 region
+        path: config.ruler.storage.s3.region
+        x-descriptors:
+          - 'urn:alm:descriptor:com.tectonic.ui:text'
           - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Ruler Configuration'
       - displayName: The ruler S3 communication status
         description: Specifies the ruler S3 communication status. Defaults to insecure

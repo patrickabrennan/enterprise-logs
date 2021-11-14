@@ -178,6 +178,7 @@ spec:
           insecure: true
           s3forcepathstyle: true
           secret_access_key: supersecret
+          region:
         type: s3
     schema_config:
       configs:
@@ -199,6 +200,7 @@ spec:
         insecure: true
         s3forcepathstyle: true
         secret_access_key: supersecret
+        region:
       boltdb_shipper:
         active_index_directory: /var/loki/index
         cache_location: /var/loki/cache
