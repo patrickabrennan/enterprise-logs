@@ -584,7 +584,7 @@ metadata:
                 "tolerations": []
               },
               "loki": {
-                "config": "auth_enabled: false\n\nserver:\n  http_listen_port: 3100\n\ndistributor:\n  ring:\n    kvstore:\n      store: memberlist\n\nmemberlist:\n  join_members:\n    - {{ include \"loki.fullname\" . }}-memberlist\n\ningester:\n  lifecycler:\n    ring:\n      kvstore:\n        store: memberlist\n      replication_factor: 1\n  chunk_idle_period: 30m\n  chunk_block_size: 262144\n  chunk_encoding: snappy\n  chunk_retain_period: 1m\n  max_transfer_retries: 0\n\nlimits_config:\n  enforce_metric_name: false\n  reject_old_samples: true\n  reject_old_samples_max_age: 168h\n  max_cache_freshness_per_query: 10m\n\nschema_config:\n  configs:\n    - from: 2020-09-07\n      store: boltdb-shipper\n      object_store: filesystem\n      schema: v11\n      index:\n        prefix: loki_index_\n        period: 24h\n\nstorage_config:\n  boltdb_shipper:\n    shared_store: filesystem\n    active_index_directory: /var/loki/index\n    cache_location: /var/loki/cache\n    cache_ttl: 168h\n    {{- if .Values.indexGateway.enabled }}\n    index_gateway_client:\n      server_address: dns:///{{ include \"loki.indexGatewayFullname\" . }}:9095\n    {{- end }}\n  filesystem:\n    directory: /var/loki/chunks\n\nchunk_store_config:\n  max_look_back_period: 0s\n\ntable_manager:\n  retention_deletes_enabled: false\n  retention_period: 0s\n\nquery_range:\n  align_queries_with_step: true\n  max_retries: 5\n  split_queries_by_interval: 15m\n  cache_results: true\n  results_cache:\n    cache:\n      enable_fifocache: true\n      fifocache:\n        max_size_items: 1024\n        validity: 24h\n\nfrontend_worker:\n  frontend_address: {{ include \"loki.queryFrontendFullname\" . }}:9095\n\nfrontend:\n  log_queries_longer_than: 5s\n  compress_responses: true\n  tail_proxy_url: http://{{ include \"loki.querierFullname\" . }}:3100\n\ncompactor:\n  shared_store: filesystem\n\nruler:\n  storage:\n    type: local\n    local:\n      directory: /etc/loki/rules\n  ring:\n    kvstore:\n      store: memberlist\n  rule_path: /tmp/loki/scratch\n  alertmanager_url: https://alertmanager.xx\n  external_url: https://alertmanager.xx\n",
+                "config": "auth_enabled: false\n\nserver:\n  http_listen_port: 3100\n\ndistributor:\n  ring:\n    kvstore:\n      store: memberlist\n\nmemberlist:\n  join_members:\n    - {{ include \"loki.fullname\" . }}-memberlist\n\ningester:\n  lifecycler:\n    ring:\n      kvstore:\n        store: memberlist\n      replication_factor: 1\n  chunk_idle_period: 30m\n  chunk_block_size: 262144\n  chunk_encoding: snappy\n  chunk_retain_period: 1m\n  max_transfer_retries: 0\n\nlimits_config:\n  enforce_metric_name: false\n  reject_old_samples: true\n  reject_old_samples_max_age: 168h\n  max_cache_freshness_per_query: 10m\n\nschema_config:\n  configs:\n    - from: 2020-09-07\n      store: boltdb-shipper\n      object_store: filesystem\n      schema: v11\n      index:\n        prefix: loki_index_\n        period: 24h\n\nstorage_config:\n  boltdb_shipper:\n    shared_store: filesystem\n    active_index_directory: /var/loki/index\n    cache_location: /var/loki/cache\n    cache_ttl: 168h\n    {{- if .Values.indexGateway.enabled }}\n    index_gateway_client:\n      server_address: dns:///{{ include \"loki.indexGatewayFullname\" . }}:9095\n    {{- end }}\n  filesystem:\n    directory: /var/loki/chunks\n\nchunk_store_config:\n  max_look_back_period: 0s\n\ntable_manager:\n  retention_deletes_enabled: false\n  retention_period: 0s\n\nquery_range:\n  align_queries_with_step: true\n  max_retries: 5\n  split_queries_by_interval: 15m\n  cache_results: true\n  results_cache:\n    cache:\n      enable_fifocache: true\n      fifocache:\n        max_size_items: 1024\n        validity: 24h\n\nfrontend_worker:\n  frontend_address: {{ include \"loki.queryFrontendFullname\" . }}:9095\n\nfrontend:\n  log_queries_longer_than: 5s\n  compress_responses: true\n  tail_proxy_url: http://{{ include \"loki.querierFullname\" . }}:3100\n\ncompactor:\n  shared_store: s3\n\nruler:\n  storage:\n    type: local\n    local:\n      directory: /etc/loki/rules\n  ring:\n    kvstore:\n      store: memberlist\n  rule_path: /tmp/loki/scratch\n  alertmanager_url: https://alertmanager.xx\n  external_url: https://alertmanager.xx\n",
                 "containerSecurityContext": {
                   "allowPrivilegeEscalation": false,
                   "capabilities": {
@@ -1277,36 +1277,6 @@ spec:
         x-descriptors:
           - 'urn:alm:descriptor:com.tectonic.ui:number'
           - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:Minio Configuration'
-     #- displayName: Overrides_exporter Replication Factor
-     #  description: The Overrides_exporter Replication Factor Must always be at least 1
-     #  path: overrides_exporter.replicas
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:number'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:GEL Configuration'
-     #- displayName: Querier Replication Factor
-     #  description: The Querier Replication Factor Must always be at least 6
-     #  path: querier.replicas
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:number'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:GEL Configuration'
-     #- displayName: Query_frontend Replication Factor
-     #  description: The Query_frontend Replication Factor Must always be at least 2
-     #  path: query_frontend.replicas
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:number'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:GEL Configuration'
-     #- displayName: Ruler Replication Factor
-     #  description: The Ruler Replication Factor Must always be at least 2
-     #  path: ruler.replicas
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:number'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:GEL Configuration'
-     #- displayName: Store_gateway Replication Factor
-     #  description: The Store_gateway Replication Factor Must always be at least 1
-     #  path: store_gateway.replicas
-     #  x-descriptors:
-     #    - 'urn:alm:descriptor:com.tectonic.ui:number'
-     #    - 'urn:alm:descriptor:com.tectonic.ui:fieldGroup:GEL Configuration'
       - displayName: Image Repository
         description: Image repository for GEL image, 'grafana/enterprise-logs' by default
         path: image.repository
