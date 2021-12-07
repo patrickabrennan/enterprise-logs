@@ -12,7 +12,221 @@ metadata:
   namespace: placeholder
 spec:
   apiservicedefinitions: {}
-  customresourcedefinitions: {}
+  customresourcedefinitions:
+    owned:
+    - description: Grafana Enterprise Logs CR is the representation of a Grafana Enterprise
+        Logs deployment on OpenShift cluster.
+      displayName: Grafana Enterprise Logs CR
+      kind: Grafana
+      name: grafanas.grafana.com
+      resources:
+      - kind: Grafana
+        name: ""
+        version: v1alpha1
+      - kind: Secret
+        name: ""
+        version: v1
+      - kind: Deployment
+        name: ""
+        version: v1
+      - kind: StatefulSet
+        name: ""
+        version: v1
+      - kind: ReplicaSet
+        name: ""
+        version: v1
+      - kind: Pod
+        name: ""
+        version: v1
+      - kind: Job
+        name: ""
+        version: v1
+      specDescriptors:
+      - description: Copy and paste the contents of the license file, normally called
+          license.jwt
+        displayName: License File
+        path: license.contents
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:password
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:GEL Configuration
+      - description: Specifies the Admin_client S3 bucket_name
+        displayName: The admin_client S3 bucket_name
+        path: config.admin_client.storage.s3.bucket_name
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Admin_client Configuration
+      - description: Specifies the Admin_client S3 endpoint
+        displayName: The admin_client S3 endpoint
+        path: config.admin_client.storage.s3.endpoint
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Admin_client Configuration
+      - description: Specifies the Admin_client S3 access_key_id
+        displayName: The admin_client S3 access_key_id
+        path: config.admin_client.storage.s3.access_key_id
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:password
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Admin_client Configuration
+      - description: Specifies the Admin_client S3 secret_access_key
+        displayName: The admin_client S3 secret_access_key
+        path: config.admin_client.storage.s3.secret_access_key
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:password
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Admin_client Configuration
+      - description: Specifies the Admin_client S3 communication status. Defaults
+          to insecure
+        displayName: The admin_client S3 communication status
+        path: config.admin_client.storage.s3.insecure
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Admin_client Configuration
+      - description: Specifies the Storage Config S3 bucketnames
+        displayName: The Storage Config S3 bucket_name
+        path: config.storage_config.aws.bucketnames
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 storage_config Configuration
+      - description: Specifies the Storage Config S3 endpoint
+        displayName: The Storage Config S3 endpoint
+        path: config.storage_config.aws.endpoint
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 storage_config Configuration
+      - description: Specifies the Storage Config S3 access_key_id
+        displayName: The Storage Config S3 access_key_id
+        path: config.storage_config.aws.access_key_id
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:password
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 storage_config Configuration
+      - description: Specifies the Storage Config S3 secret_access_key
+        displayName: The Storage Config S3 secret_access_key
+        path: config.storage_config.aws.secret_access_key
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:password
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 storage_config Configuration
+      - description: Specifies the Storage Config S3 region
+        displayName: The Storage Config S3 region
+        path: config.storage_config.aws.region
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 storage_config Configuration
+      - description: Specifies the Storage Config S3 communication status. Defaults
+          to insecure
+        displayName: The Storage Config S3 communication status
+        path: config.storage_config.aws.insecure
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 storage_config Configuration
+      - description: Specifies the s3forcepathstyle. Defaults to true
+        displayName: The Storage Config s3forcepathstyle policy
+        path: config.storage_config.aws.s3forcepathstyle
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 storage_config Configuration
+      - description: Specifies the ruler S3 bucketnames
+        displayName: The ruler S3 bucketnames
+        path: config.ruler.storage.s3.bucketnames
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Ruler Configuration
+      - description: Specifies the ruler S3 endpoint
+        displayName: The ruler S3 endpoint
+        path: config.ruler.storage.s3.endpoint
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Ruler Configuration
+      - description: Specifies the ruler S3 access_key_id
+        displayName: The ruler S3 access_key_id
+        path: config.ruler.storage.s3.access_key_id
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:password
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Ruler Configuration
+      - description: Specifies the ruler S3 secret_access_key
+        displayName: The ruler S3 secret_access_key
+        path: config.ruler.storage.s3.secret_access_key
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:password
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Ruler Configuration
+      - description: Specifies the ruler S3 region
+        displayName: The ruler S3 region
+        path: config.ruler.storage.s3.region
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Ruler Configuration
+      - description: Specifies the ruler S3 communication status. Defaults to insecure
+        displayName: The ruler S3 communication status
+        path: config.ruler.storage.s3.insecure
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Ruler Configuration
+      - description: Specifies the s3forcepathstyle. Defaults to true
+        displayName: The ruler s3forcepathstyle policy
+        path: config.ruler.storage.s3.s3forcepathstyle
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:S3 Ruler Configuration
+      - description: Turn off is setting S3 endpoints. Set to on by default. For large
+          configurations set to off as S3 should be used instead
+        displayName: Minio
+        path: minio.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:Minio Configuration
+      - description: The Minio Replication Factor Must always be at least 4
+        displayName: Minio Replication Factor
+        path: minio.replicas
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:number
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:Minio Configuration
+      - description: Image repository for GEL image, 'grafana/enterprise-logs' by
+          default
+        displayName: Image Repository
+        path: image.repository
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:Image
+      - description: Image version tag for GEL image, 'v1.1.0' by default
+        displayName: Image Tag
+        path: image.tag
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:text
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:Image
+      - description: Specifies whether Memcached Chunks should be turned on or off,
+          off by default
+        displayName: Memcached Chunks
+        path: loki-distributed.memcachedChunks.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:Memcached Configuration
+      - description: Specifies whether Memcached Exporter should be turned on or off,
+          off by default
+        displayName: Memcached Exporter
+        path: loki-distributed.memcachedExporter.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:Memcached Configuration
+      - description: Specifies whether Memcached Frontend should be turned on or off,
+          off by default
+        displayName: Memcached Frontend
+        path: loki-distributed.memcachedFrontend.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:Memcached Configuration
+      - description: Specifies whether Memcached Index Queries should be turned on
+          or off, off by default
+        displayName: Memcached Index Queries
+        path: loki-distributed.memcachedIndexQueries.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:Memcached Configuration
+      - description: Specifies whether Memcached Index Writes should be turned on
+          or off, off by default
+        displayName: Memcached Index Writes
+        path: loki-distributed.memcachedIndexWrites.enabled
+        x-descriptors:
+        - urn:alm:descriptor:com.tectonic.ui:booleanSwitch
+        - urn:alm:descriptor:com.tectonic.ui:fieldGroup:Memcached Configuration
+      version: v1alpha1
   description: An operator to install Grafana Enterprise Logs (GEL) on OpenShift
   displayName: Grafana Enterprise Logs (GEL) Operator
   icon:
