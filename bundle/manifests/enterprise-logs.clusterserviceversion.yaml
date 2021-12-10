@@ -644,7 +644,7 @@ metadata:
               },
               "memcachedChunks": {
                 "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.memcachedChunksSelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.memcachedChunksSelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
-                "enabled": false,
+                "enabled": true,
                 "extraArgs": [
                   "-I 32m"
                 ],
@@ -659,7 +659,7 @@ metadata:
                 "tolerations": []
               },
               "memcachedExporter": {
-                "enabled": false,
+                "enabled": true,
                 "image": {
                   "pullPolicy": "IfNotPresent",
                   "registry": "docker.io",
@@ -670,7 +670,7 @@ metadata:
               },
               "memcachedFrontend": {
                 "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.memcachedFrontendSelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.memcachedFrontendSelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
-                "enabled": false,
+                "enabled": true,
                 "extraArgs": [
                   "-I 32m"
                 ],
@@ -686,7 +686,7 @@ metadata:
               },
               "memcachedIndexQueries": {
                 "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.memcachedIndexQueriesSelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.memcachedIndexQueriesSelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
-                "enabled": false,
+                "enabled": true,
                 "extraArgs": [
                   "-I 32m"
                 ],
@@ -702,7 +702,7 @@ metadata:
               },
               "memcachedIndexWrites": {
                 "affinity": "podAntiAffinity:\n  requiredDuringSchedulingIgnoredDuringExecution:\n    - labelSelector:\n        matchLabels:\n          {{- include \"loki.memcachedIndexWritesSelectorLabels\" . | nindent 10 }}\n      topologyKey: kubernetes.io/hostname\n  preferredDuringSchedulingIgnoredDuringExecution:\n    - weight: 100\n      podAffinityTerm:\n        labelSelector:\n          matchLabels:\n            {{- include \"loki.memcachedIndexWritesSelectorLabels\" . | nindent 12 }}\n        topologyKey: failure-domain.beta.kubernetes.io/zone\n",
-                "enabled": false,
+                "enabled": true,
                 "extraArgs": [
                   "-I 32m"
                 ],
@@ -866,8 +866,9 @@ metadata:
               "serviceAccount": {
                 "annotations": {},
                 "automountServiceAccountToken": true,
-                "create": true,
-                "imagePullSecrets": []
+                "create": false,
+                "imagePullSecrets": [],
+                "name": "enterprise-logs"
               },
               "serviceMonitor": {
                 "annotations": {},
@@ -1060,7 +1061,8 @@ metadata:
                 "type": "ClusterIP"
               },
               "serviceAccount": {
-                "create": true
+                "create": false,
+                "name": "enterprise-logs"
               },
               "tls": {
                 "certSecret": "",
@@ -1082,7 +1084,8 @@ metadata:
             },
             "nameOverride": null,
             "serviceAccount": {
-              "create": true
+              "create": false,
+              "name": "enterprise-logs"
             },
             "tokengen": {
               "annotations": {},
@@ -1505,6 +1508,73 @@ spec:
               serviceAccountName: enterprise-logs-controller-manager
               terminationGracePeriodSeconds: 10
       permissions:
+      - rules:
+        - apiGroups:
+          - grafana.com
+          resources:
+          - grafanas
+          - grafanas/status
+          - grafanas/finalizers
+          verbs:
+          - create
+          - delete
+          - get
+          - list
+          - patch
+          - update
+          - watch
+        - apiGroups:
+          - policy
+          resources:
+          - poddisruptionbudgets
+          verbs:
+          - '*'
+        - apiGroups:
+          - ""
+          resources:
+          - configmaps
+          - persistentvolumeclaims
+          - secrets
+          - serviceaccounts
+          - services
+          verbs:
+          - '*'
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resources:
+          - rolebindings
+          - roles
+          verbs:
+          - '*'
+        - apiGroups:
+          - apps
+          resources:
+          - deployments
+          - statefulsets
+          verbs:
+          - '*'
+        - apiGroups:
+          - rbac.authorization.k8s.io
+          resources:
+          - clusterrolebindings
+          - clusterroles
+          verbs:
+          - '*'
+        - apiGroups:
+          - security.openshift.io
+          resourceNames:
+          - hostmount-anyuid
+          resources:
+          - securitycontextconstraints
+          verbs:
+          - use
+        - apiGroups:
+          - security.openshift.io
+          resources:
+          - securitycontextconstraints
+          verbs:
+          - '*'
+        serviceAccountName: enterprise-logs
       - rules:
         - apiGroups:
           - ""

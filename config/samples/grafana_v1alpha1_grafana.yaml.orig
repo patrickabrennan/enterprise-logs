@@ -735,7 +735,7 @@ spec:
                   matchLabels:
                     {{- include "loki.memcachedChunksSelectorLabels" . | nindent 12 }}
                 topologyKey: failure-domain.beta.kubernetes.io/zone
-      enabled: true
+      enabled: false
       extraArgs:
       - -I 32m
       extraEnv: []
@@ -748,7 +748,7 @@ spec:
       terminationGracePeriodSeconds: 30
       tolerations: []
     memcachedExporter:
-      enabled: true
+      enabled: false
       image:
         pullPolicy: IfNotPresent
         registry: docker.io
@@ -770,7 +770,7 @@ spec:
                   matchLabels:
                     {{- include "loki.memcachedFrontendSelectorLabels" . | nindent 12 }}
                 topologyKey: failure-domain.beta.kubernetes.io/zone
-      enabled: true
+      enabled: false
       extraArgs:
       - -I 32m
       extraEnv: []
@@ -797,7 +797,7 @@ spec:
                   matchLabels:
                     {{- include "loki.memcachedIndexQueriesSelectorLabels" . | nindent 12 }}
                 topologyKey: failure-domain.beta.kubernetes.io/zone
-      enabled: true
+      enabled: false
       extraArgs:
       - -I 32m
       extraEnv: []
@@ -824,7 +824,7 @@ spec:
                   matchLabels:
                     {{- include "loki.memcachedIndexWritesSelectorLabels" . | nindent 12 }}
                 topologyKey: failure-domain.beta.kubernetes.io/zone
-      enabled: true
+      enabled: false
       extraArgs:
       - -I 32m
       extraEnv: []
@@ -989,8 +989,7 @@ spec:
     serviceAccount:
       annotations: {}
       automountServiceAccountToken: true
-      create: false
-      name: enterprise-logs
+      create: true
       imagePullSecrets: []
     serviceMonitor:
       annotations: {}
@@ -1160,8 +1159,7 @@ spec:
       port: 9000
       type: ClusterIP
     serviceAccount:
-      create: false
-      name: enterprise-logs
+      create: true
     tls:
       certSecret: ""
       enabled: false
@@ -1178,8 +1176,7 @@ spec:
     zones: 1
   nameOverride: null
   serviceAccount:
-    create: false
-    name: enterprise-logs
+    create: true
   tokengen:
     annotations: {}
     enable: true
