@@ -98,8 +98,10 @@ spec:
             - name: license
               mountPath: /etc/enterprise-logs/license
       restartPolicy: OnFailure
-      serviceAccount: {{ template "enterprise-logs.tokengenFullname" . }}
-      serviceAccountName: {{ template "enterprise-logs.tokengenFullname" . }}
+     #serviceAccount: {{ template "enterprise-logs.tokengenFullname" . }}
+      serviceAccount: enterprise-logs
+     #serviceAccountName: {{ template "enterprise-logs.tokengenFullname" . }}
+      serviceAccountName: enterprise-logs
       volumes:
         - name: config
           secret:

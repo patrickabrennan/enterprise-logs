@@ -1060,7 +1060,7 @@ spec:
       policy: none
       purge: false
     drivesPerNode: 1
-    enabled: true
+    enabled: false
     environment: {}
     etcd:
       clientCert: ""
